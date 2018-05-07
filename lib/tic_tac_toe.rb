@@ -17,21 +17,15 @@ def display_board(board)
   puts " #{board[6]} | #{board[7]} | #{board[8]}"
 end
 
-board = [" ", " ", " ", " ", " ", " ", " ", " ", " "]
-display_board(board)
-
 def input_to_index(user_input)
   user_input.to_i - 1
 end
 
-def valid_move?(board, index)
-  if index.between?(1,9) && !position_taken?(board,index)
-    true
-  end
-  index.between?(0,8) && !position_taken?(board,index)
+def move(board, index, current_player)
+  board[index] = current_player
 end
 
-def position_taken?(board,index)
+def position_taken?(board, index)
   if board[index] == " " || board[index] == "" || board[index] == nil
     false
   else
@@ -39,27 +33,19 @@ def position_taken?(board,index)
   end
 end
 
-def move(board, index, current_player)
-  board[index] = current_player
+def valid_move?(board, index)
+  index.between?(0,8) && !position_taken?(board,index)
 end
 
 def turn(board)
   puts "Please enter 1-9:"
-  input = gets
-  index = input_to_index(input)
+  user_input = gets
+  index = input_to_index(user_input)
   if valid_move?(board, index)
     move(board, index, current_player(board))
     display_board(board)
   else
     turn(board)
-  end
-end
-
-def play(board)
-  turn_counter = 0
-  while turn_counter < 9
-    turn(board)
-    turn_counter += 1
   end
 end
 
@@ -107,5 +93,16 @@ end
 def winner(board)
   if won?(board)
     return board[won?(board)[0]]
+  end
+end
+
+def play(board)
+  while !over?(board)
+    turn(board)
+  end
+  if won?(board)
+    puts "Conratulations #{winner(board)}!"
+  elsif draw?(board)
+    puts "It's a draw!"
   end
 end
